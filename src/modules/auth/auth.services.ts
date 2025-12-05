@@ -14,8 +14,8 @@ const signUP = async(payload: Record<string, unknown>) =>{
         throw Error('Password can\'t be less than 6 characters');
     };
 
-    if((role as string) !== 'customer' || (role as string) !== 'admin') {
-        throw Error("Role must either 'customer' or 'admin' ");
+    if((role as string) !== 'customer' && (role as string) !== 'admin') {
+        throw Error("Role must either 'customer' or 'admin'");
     }
     
     

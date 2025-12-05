@@ -43,9 +43,12 @@ const initDB = async()=>{
                 total_price NUMERIC(10,2) NOT NULL CHECK(total_price > 0),
                 status VARCHAR(10) NOT NULL CHECK(status IN('active', 'cancelled', 'returned')),
                 created_at TIMESTAMP DEFAULT NOW(),
-                updated_at TIMESTAMP DEFAULT NOE()
+                updated_at TIMESTAMP DEFAULT NOW()
             )
             `);
+
+            console.log('Database initialized successfully!!');
+
     } catch (error:any) {
         console.log("Database initialization failed: ", error.message)
     }
