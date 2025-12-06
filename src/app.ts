@@ -2,6 +2,7 @@ import express from 'express';
 import config from './config';
 import authRoute from './modules/auth/auth.routers';
 import vehicleRoutes from './modules/vehicles/vehicle.routers';
+import initDB from './config/db';
 
 
 const app = express();
@@ -9,6 +10,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+initDB();
 
 
 app.get("/health-check", (request, response)=>{
