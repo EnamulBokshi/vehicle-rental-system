@@ -68,7 +68,6 @@ const updateVehicle = async(req:Request, res: Response) => {
             return;
         }
         
-        
         const newVehicle = {...vehicle, ...vehicleBody}
         
         const result = await vehicleServices.updateVehicle(newVehicle);
@@ -84,11 +83,31 @@ const updateVehicle = async(req:Request, res: Response) => {
 }
 
 
+const deleteVehicle = async(req: Request, res: Response) => {
+    try {
+        const {vehicleId} = req.params;
+        if(!vehicleId) {
+        res.status(400).json(errorResponse(`Couldn't delete the vehicle`,'Vehicle id is required'));
+            return;
+        }
+        const result = await vehicleServices.deleteVehicle(vehicleId);
+        if(result.rowCount == 0) {
+            res.status(404).json(errorResponse(`Couldn't delete the vehicle`,'Vehicle not found!'));
+            return;
+        }
+        res.status(500).json({success: true, message: 'Vehicle deleted successfully'});
+        
+    } catch (err: any) {
+        res.status(500).json(errorResponse(`Couldn't delete the vehicle`,err.message));
+    }
+}
+
 const vehicleController = {
     createVehicle,
     getAllVehicles,
     getVehicle,
-    updateVehicle
+    updateVehicle,
+    deleteVehicle
 }
 
 
