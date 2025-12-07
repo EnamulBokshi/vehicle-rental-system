@@ -4,7 +4,7 @@ import vehicleRoutes from './modules/vehicles/vehicle.routes';
 import initDB from './config/db';
 import userRoutes from './modules/users/user.routes';
 import bookingRoutes from './modules/bookings/booking.routes';
-
+import startBookingScheduler from './helpers/updateExpiredBookings';
 
 const app = express();
 
@@ -13,6 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 initDB();
 
+startBookingScheduler();
 
 app.get("/health-check", (request, response)=>{
     response.status(200).json({success: true, message: 'Cool server is up and running!!'});
