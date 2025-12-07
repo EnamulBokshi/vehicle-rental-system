@@ -13,7 +13,6 @@ const authMiddleware = (...roles:string[]) =>{
                 return res.status(401).json(errorResponse('Access token in missing!','Missing or invalid authentication token'));
             }
             const jwtToken = token.substring(7);
-            console.log("jwt token: ",jwtToken);
             const decodedData = jwt.verify(jwtToken, config.jwtSecret as string) as JwtPayload;
             req.user = decodedData;
             if(roles.length && !roles.includes(decodedData.role)){
