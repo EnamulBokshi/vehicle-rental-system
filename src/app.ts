@@ -1,5 +1,4 @@
-import express from 'express';
-import config from './config';
+import express, { Request, Response } from 'express';
 import authRoute from './modules/auth/auth.routes';
 import vehicleRoutes from './modules/vehicles/vehicle.routes';
 import initDB from './config/db';
@@ -26,6 +25,15 @@ app.use("/api/v1/vehicles", vehicleRoutes)
 app.use("/api/v1/users",userRoutes);
 
 app.use("/api/v1/bookings", bookingRoutes);
+
+app.use((req:Request, res:Response) =>{
+    res.status(404).json({
+        success: false,
+        message: 'Route not found',
+        path: req.path
+    })
+});
+
 
 export default app;
 
