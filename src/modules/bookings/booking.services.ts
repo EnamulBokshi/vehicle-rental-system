@@ -14,11 +14,11 @@ const createBooking = async(payload: Record<string, unknown>) => {
 }
 
 const getBooking = async(customerId: string) => {
-    return await pool.query(`SELECT * FROM bookings WHERE customer_id = $1 RETURNING *`,[customerId]);
+    return await pool.query(`SELECT * FROM bookings WHERE customer_id = $1`,[customerId]);
 }
 
 const getBookingByVehicleId = async(vehicle_id: string) => {
-    return await pool.query(`SELECT * FROM bookings WHERE vehicle_id = $1 RETURNING *`,[vehicle_id]);
+    return await pool.query(`SELECT * FROM bookings WHERE vehicle_id = $1`,[vehicle_id]);
 }
 
 

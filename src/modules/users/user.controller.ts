@@ -61,7 +61,6 @@ const deleteUser = async(req: Request, res: Response) => {
         //TODO check if  any bookings exists or not !
         const bookings = (await bookingServices.getBooking(userId!));
         let hasActiveBooking = false;
-        const bookingsIds = [];
 
         bookings.rows.map((row) => {
             if(row.status === 'active') {
@@ -83,6 +82,7 @@ const deleteUser = async(req: Request, res: Response) => {
         }
 
     } catch (err: any) {
+        console.log('User delete error: ', err)
         res.status(500).json(errorResponse('Internal Server Error', err.message));
     }
 }

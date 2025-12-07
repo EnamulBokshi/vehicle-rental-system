@@ -166,7 +166,6 @@ const getBookings = async (req: Request, res: Response) => {
 				}),
 			);
 
-			console.log("Booking data (admin view): ", formattedBookings);
 
 			res
 				.status(200)

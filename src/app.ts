@@ -1,3 +1,4 @@
+
 import express, { Request, Response } from 'express';
 import authRoute from './modules/auth/auth.routes';
 import vehicleRoutes from './modules/vehicles/vehicle.routes';
@@ -26,7 +27,9 @@ app.use("/api/v1/vehicles", vehicleRoutes)
 app.use("/api/v1/users",userRoutes);
 
 app.use("/api/v1/bookings", bookingRoutes);
-
+app.use("/", (Request, Response)=>{
+    Response.status(200).json({message: 'Welcome to Vehicle Rental System'});
+})
 app.use((req:Request, res:Response) =>{
     res.status(404).json({
         success: false,
