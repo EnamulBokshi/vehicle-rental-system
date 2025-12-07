@@ -83,40 +83,43 @@ const updateVehicle = async(req:Request, res: Response) => {
     }
 }
 
-
 const deleteVehicle = async(req: Request, res: Response) => {
     try {
         const {vehicleId} = req.params;
         if(!vehicleId) {
-        res.status(400).json(errorResponse(`Couldn't delete the vehicle`,'Vehicle id is required'));
+            res.status(400).json(errorResponse(`Couldn't delete the vehicle`,'Vehicle id is required'));
             return;
         }
 
-        const bookings = (await bookingServices.getBookingByVehicleId(vehicleId!));
-        let hasActiveBooking = false;
-     
-
-        bookings.rows.map((row) => {
-            if(row.status === 'active') {
-                
-                hasActiveBooking = true;
-                
-            }
-        })
-
-        if(hasActiveBooking) {
-            res.status(400).json({success: false, message: "Couldn't delete the vehicle! It has one or more active bookings ", error: 'Failed to delete the user' });
-            return 
-        }
-
-        const result = await vehicleServices.deleteVehicle(vehicleId);
-        if(result.rowCount == 0) {
+        // Check if vehicle exists
+        const vehicleExists = await vehicleServices.getVehicle(vehicleId);
+        if(vehicleExists.rows.length === 0) {
             res.status(404).json(errorResponse(`Couldn't delete the vehicle`,'Vehicle not found!'));
             return;
         }
-        res.status(500).json({success: true, message: 'Vehicle deleted successfully'});
+
+        // Check if vehicle has any active bookings
+        const bookings = await bookingServices.getBookingByVehicleId(vehicleId);
+        const hasActiveBooking = bookings.rows.some((row) => row.status === 'active');
+
+        if(hasActiveBooking) {
+            res.status(400).json({
+                success: false, 
+                message: "Couldn't delete the vehicle! It has one or more active bookings", 
+                error: 'Failed to delete the vehicle' 
+            });
+            return;
+        }
+
+        const result = await vehicleServices.deleteVehicle(vehicleId);
+        if(result.rowCount === 0) {
+            res.status(404).json(errorResponse(`Couldn't delete the vehicle`,'Vehicle not found!'));
+            return;
+        }
+        res.status(200).json({success: true, message: 'Vehicle deleted successfully'});
         
     } catch (err: any) {
+        console.log('Vehicle delete error: ', err);
         res.status(500).json(errorResponse(`Couldn't delete the vehicle`,err.message));
     }
 }

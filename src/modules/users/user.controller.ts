@@ -53,36 +53,46 @@ const updateUser = async(req: Request, res: Response) => {
     }
 }
 
+
+
 const deleteUser = async(req: Request, res: Response) => {
     try {
         const {userId} = req.params;
 
         
-        //TODO check if  any bookings exists or not !
-        const bookings = (await bookingServices.getBooking(userId!));
-        let hasActiveBooking = false;
+        const userExists = await userServices.getUser(userId!);
+        if(userExists.rows.length === 0) {
+            res.status(404).json({success: false, message: 'User does not exist'});
+            return;
+        }
 
-        bookings.rows.map((row) => {
-            if(row.status === 'active') {
-                
-                hasActiveBooking = true;
-                
-            }
-        })
+        const bookings = await bookingServices.getBooking(userId!);
+        const hasActiveBooking = bookings.rows.some((row) => row.status === 'active');
 
         if(hasActiveBooking) {
-            res.status(400).json({success: false, message: "Couldn't delete the user! Has one or more active bookings ", error: 'Failed to delete the user' });
-            return 
+            res.status(400).json({
+                success: false, 
+                message: "Couldn't delete the user! Has one or more active bookings", 
+                error: 'Failed to delete the user' 
+            });
+            return;
         }
         
+        // Delete the user
         const result = await userServices.deleteUser(userId!);
         
         if(result.rowCount === 0) {
-            res.status(404).json({success: false, message: 'User does not exists'});
+            res.status(404).json({success: false, message: 'User does not exist'});
+            return;
         }
 
+        res.status(200).json({
+            success: true, 
+            message: 'User deleted successfully'
+        });
+
     } catch (err: any) {
-        console.log('User delete error: ', err)
+        console.log('User delete error: ', err);
         res.status(500).json(errorResponse('Internal Server Error', err.message));
     }
 }
