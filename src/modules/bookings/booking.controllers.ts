@@ -119,7 +119,7 @@ const createBooking = async (req: Request, res: Response) => {
 			},
 		};
 
-		res.status(201).json({ message: "Booking checking: ", data: bookingData });
+		res.status(201).json({success:true, message: "Booking created successfully: ", data: bookingData });
 	} catch (err: any) {
 		console.log("Bookings errors: ", err);
 	}
