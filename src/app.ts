@@ -27,8 +27,8 @@ app.use("/api/v1/vehicles", vehicleRoutes)
 app.use("/api/v1/users",userRoutes);
 
 app.use("/api/v1/bookings", bookingRoutes);
-app.use("/", (Request, Response)=>{
-    Response.status(200).json({message: 'Welcome to Vehicle Rental System'});
+app.get("/", (req:Request, res: Response) => {
+    res.status(200).json({success: true, message: 'Welcome to Vehicle Rental System.'})
 })
 app.use((req:Request, res:Response) =>{
     res.status(404).json({
