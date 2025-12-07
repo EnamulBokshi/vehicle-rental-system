@@ -1,5 +1,6 @@
 import errorResponse from "../../helpers/errorMessage";
 import successResponse from "../../helpers/successMessage";
+import bookingServices from "../bookings/booking.services";
 import vehicleServices from "./vehicle.services";
 import { Request, Response } from "express";
 
@@ -90,6 +91,24 @@ const deleteVehicle = async(req: Request, res: Response) => {
         res.status(400).json(errorResponse(`Couldn't delete the vehicle`,'Vehicle id is required'));
             return;
         }
+
+        const bookings = (await bookingServices.getBookingByVehicleId(vehicleId!));
+        let hasActiveBooking = false;
+     
+
+        bookings.rows.map((row) => {
+            if(row.status === 'active') {
+                
+                hasActiveBooking = true;
+                
+            }
+        })
+
+        if(hasActiveBooking) {
+            res.status(400).json({success: false, message: "Couldn't delete the vehicle! It has one or more active bookings ", error: 'Failed to delete the user' });
+            return 
+        }
+
         const result = await vehicleServices.deleteVehicle(vehicleId);
         if(result.rowCount == 0) {
             res.status(404).json(errorResponse(`Couldn't delete the vehicle`,'Vehicle not found!'));

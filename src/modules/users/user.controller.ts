@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import userServices from "./user.services";
 import errorResponse from "../../helpers/errorMessage";
 import successResponse from "../../helpers/successMessage";
+import bookingServices from "../bookings/booking.services";
 
 const getAllUsers = async(req:Request, res:Response) => {
     try {
@@ -58,6 +59,22 @@ const deleteUser = async(req: Request, res: Response) => {
 
         
         //TODO check if  any bookings exists or not !
+        const bookings = (await bookingServices.getBooking(userId!));
+        let hasActiveBooking = false;
+        const bookingsIds = [];
+
+        bookings.rows.map((row) => {
+            if(row.status === 'active') {
+                
+                hasActiveBooking = true;
+                
+            }
+        })
+
+        if(hasActiveBooking) {
+            res.status(400).json({success: false, message: "Couldn't delete the user! Has one or more active bookings ", error: 'Failed to delete the user' });
+            return 
+        }
         
         const result = await userServices.deleteUser(userId!);
         
