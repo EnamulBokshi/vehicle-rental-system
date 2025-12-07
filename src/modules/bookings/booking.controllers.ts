@@ -237,9 +237,66 @@ const getBookings = async (req: Request, res: Response) => {
 	}
 };
 
+const updateBookingStatus = async(req: Request, res: Response) => {
+    try {
+        const {bookingId} = req.params;
+        const {status} = req.body;
+    
+        if(!bookingId && !status){
+            res.status(400).json({success:false, message: 'status is missing'});
+            return;
+        }
+
+        const userRole = req.user?.role || undefined;
+        if(!userRole) {
+            res.status(401).json({success:false, message: 'access denied'});
+            return;
+        }
+        
+        if(userRole === 'admin' && status === 'returned'){
+            const result = (await bookingServices.changeStatus(bookingId !, status)).rows[0];
+            if(!result){
+                res.status(500).json({success: false, message: 'Failed to update status'})
+                
+                return;
+            }
+            const vehicleId = result.vehicle_id;
+            const vehicle = (await vehicleServices.getVehicle(vehicleId)).rows[0];
+            const formattedData = {...result, vehicle:{availability_status: vehicle.availability_status}};
+            res.status(200).json({success: true, message: "Booking cancelled successfully", data: formattedData}) 
+
+            return;
+        }
+        else if(userRole === 'customer' && status === 'cancelled'){
+            const result = (await bookingServices.changeStatus(bookingId !, status)).rows[0];
+            
+            if(!result){
+                res.status(500).json({success: false, message: 'Failed to update status'})
+                
+                return;
+            }
+
+            res.status(200).json({success: true, message: "Booking marked as returned. Vehicle is now available", data: result}) 
+            return;
+        }
+        else{
+            res.status(403).json({
+				success: false,
+				message: "Unauthorized access",
+				error: "You are not authorized to view bookings",
+			});
+        }
+
+    } catch (err: any) {
+        console.log("Update booking status error: ",err);
+        res.status(500).json(errorResponse(err.message, err));
+    }
+}
+
 const bookingController = {
 	createBooking,
 	getBookings,
+    updateBookingStatus
 };
 
 export default bookingController;

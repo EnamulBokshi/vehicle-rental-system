@@ -24,6 +24,19 @@ const getAllBookings = async() =>{
 
 
 
+const changeStatus = async(id:string, status: 'cancelled' | 'returned') =>{
+    const result = await pool.query(`
+            UPDATE bookings SET status=$1 WHERE id=$2 RETURNING *
+        `,[status, id]);
+    
+    const vehicleId = result.rows[0].vehicle_id;
+    await pool.query(`
+            UPDATE vehicles SET availability_status = $1 WHERE id =$2
+        `,['available',vehicleId]);
+
+    return result;
+}
+
 // const createBooking = async(payload: Record<string, unknown>) => {
 //     const {customer_id, vehicle_id, rent_start_date, rent_end_date, total_price, status}  = payload;
     
@@ -58,7 +71,8 @@ const getAllBookings = async() =>{
 const bookingServices = {
     createBooking,
     getBooking,
-    getAllBookings
+    getAllBookings,
+    changeStatus
 }
 
 export default bookingServices;
