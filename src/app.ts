@@ -1,8 +1,9 @@
 import express from 'express';
 import config from './config';
-import authRoute from './modules/auth/auth.routers';
-import vehicleRoutes from './modules/vehicles/vehicle.routers';
+import authRoute from './modules/auth/auth.routes';
+import vehicleRoutes from './modules/vehicles/vehicle.routes';
 import initDB from './config/db';
+import userRoutes from './modules/users/user.routes';
 
 
 const app = express();
@@ -20,6 +21,8 @@ app.get("/health-check", (request, response)=>{
 app.use("/api/v1/auth",authRoute);
 
 app.use("/api/v1/vehicles", vehicleRoutes)
+
+app.use("/api/v1/users",userRoutes);
 
 export default app;
 
