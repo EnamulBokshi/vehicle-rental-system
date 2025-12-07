@@ -3,7 +3,7 @@ import authRoute from './modules/auth/auth.routes';
 import vehicleRoutes from './modules/vehicles/vehicle.routes';
 import initDB from './config/db';
 import userRoutes from './modules/users/user.routes';
-import bookingRoutes from './modules/bookings/booking.routers';
+import bookingRoutes from './modules/bookings/booking.routes';
 
 
 const app = express();
