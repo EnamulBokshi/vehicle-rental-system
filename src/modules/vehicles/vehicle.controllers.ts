@@ -9,7 +9,7 @@ const createVehicle = async(req: Request, res: Response) => {
         const vehicle = result.rows[0];
         const newVehicle = {id:vehicle.id, vehicle_name: vehicle.vehicle_name, type: vehicle.type, registration_number:vehicle.registration_number, daily_rent_price: vehicle.daily_rent_price, availability_status: vehicle.availability_status};
 
-        res.status(200).json(successResponse('Vehicle created successfully',newVehicle));
+        res.status(201).json(successResponse('Vehicle created successfully',newVehicle));
     } catch (error:any) {
         console.log("Couldn't create the vehicle, please solve the error: ",error.message);
         res.status(500).json(errorResponse('Vehicle creation failed',error.message));
