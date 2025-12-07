@@ -11,7 +11,6 @@ const getAllUsers = async(req:Request, res:Response) => {
             res.status(200).json({success: true, message: 'No users exists! ', data: []});
             return;
         }
-        console.log("users: ", result.rows);
         res.status(200).json(successResponse('Users retrieved successfully',result.rows));
     } catch (err: any) {
         console.log(`Users getting error: `, err.message);
@@ -25,7 +24,6 @@ const updateUser = async(req: Request, res: Response) => {
         const payload = req.body;
         const {userId} = req.params;
         const allowedUser = req.user;
-        console.log("allowed user: ",allowedUser);
 
         if(allowedUser?.id != userId && allowedUser?.role !=='admin') {
             return res.status(403).json(errorResponse('You are not allowed ', 'Forbidden, Unauthorized access'));
@@ -38,7 +36,7 @@ const updateUser = async(req: Request, res: Response) => {
         }
         
         const newUser = {...currentUser, ...payload};
-        console.log("New User: ", newUser)
+     
         delete newUser.password;
         const result = await userServices.updateUser(userId as string,newUser);
 
